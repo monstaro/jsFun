@@ -491,12 +491,16 @@ const nationalParksPrompts = {
  
     let allParks = [];
 
-    let parksPerState = nationalParks.reduce((acc, curVal) => {
-      acc[curVal.location] = curVal.name;
-      return acc;
-    }, {});
+    // let parksPerState = nationalParks.reduce((acc, curVal) => {
+    //   acc[curVal.location] = curVal.name;
+    //   return acc;
+    // }, allParks);
 
-    allParks.push(parksPerState);
+    let parksPerState = nationalParks.forEach(park => {
+      let stateAndPark = {};
+      stateAndPark[park.location] = park.name;
+      allParks.push(stateAndPark);
+    });
 
 
     const result = allParks;
@@ -562,9 +566,13 @@ const breweryPrompts = {
   getBeerCount() {
     // Return the total beer count of all beers for every brewery e.g.
     // 40
+    let beers = 0;
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    breweries.forEach(brewery => {
+      beers += brewery.beers.length;
+    });
+      
+    return beers;
 
     // Annotation:
     // Write your annotation here as a comment
@@ -579,8 +587,14 @@ const breweryPrompts = {
     // ...etc.
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    let bars = [];
+    const result = breweries.forEach(brewery => {
+      let bar = {};
+      bar.name = brewery.name;
+      bar.beerCount = brewery.beers.length;
+      bars.push(bar);
+    });
+    return bars;
 
     // Annotation:
     // Write your annotation here as a comment
@@ -590,9 +604,24 @@ const breweryPrompts = {
     // Return the beer which has the highest ABV of all beers
     // e.g.
     // { name: 'Barrel Aged Nature\'s Sweater', type: 'Barley Wine', abv: 10.9, ibu: 40 }
+    let allIbu = [];
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+
+
+    breweries.forEach(brewery => {
+      brewery.beers.forEach(beer => {
+        allIbu.push(beer.ibu);
+      });
+    });
+    
+    Math.max.apply(null, allIbu.filter(Boolean));
+
+    const result =   breweries.reduce(function(prev, current) {
+      return (prev.ibu > current.ibu) ? prev : current;
+    });
     return result;
+
+
 
     // Annotation:
     // Write your annotation here as a comment
