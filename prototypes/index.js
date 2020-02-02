@@ -26,24 +26,22 @@ const kittyPrompts = {
     // Return an array of just the names of kitties who are orange e.g.
     // ['Tiger', 'Snickers']
 
-    let answer = [];
+  
 
-    let orangeKittens = kitties.filter(kitten => {
-      let orangeKitten = kitten.color === 'orange';
-      return orangeKitten;
-    });
+    const result = () => {
+      return kitties.reduce((acc, cur) => {
 
-    orangeKittens.forEach(kitty => {
-      answer.push(kitty.name);
-    });
+        if (cur.color === 'orange') {
+          acc.push(cur.name);
+        }
 
-    const result = answer;
-    return result;
+        return acc;
+      }, []);
+    };
+    return result();
 
     // Annotation:
-    // create empty array that will be used to store the names of just the orange kitties
-    // assign a var to a filter method that returns true if kitten.color is orange. assign those elements to a new var orangeKitten,
-    // using forEach, loop through the var assigned to our filter method, and push each name into a new array. 
+
   },
 
   sortByAge() {
@@ -388,36 +386,30 @@ const classPrompts = {
     //   beCapacity: 96
     // }
 
-    let FEE = classrooms.filter(cohort => {
-      return cohort.program === 'FE';
-    });
-    
-    let BEE = classrooms.filter(cohort => {
-      return cohort.program === 'BE';
-    });
-    
-    //seperates array into FE and BE
 
-    feCap = 0;
-    beCap = 0;
-    
-    FEE.forEach(cohort => {
-      feCap += cohort.capacity;
-      return feCap;
-    });
-    
-    BEE.forEach(cohort => {
-      beCap += cohort.capacity;
-      return beCap;
-    });
 
-    //returns total capacity of BE and FE programmes.
-
-    let totalCaps = {feCapacity: feCap, beCapacity: beCap};
-    
-
-    const result = totalCaps;
-    return result;
+    const result = () => {
+      let fecap = 0;
+      let becap = 0;
+      return classrooms.reduce((acc, cur) => {
+        if (!acc.feCapacity) {
+          acc.feCapacity = 0;
+        }
+        if(cur.program === 'FE') {
+          fecap += cur.capacity;
+          acc.feCapacity = fecap;
+        }
+        if (!acc.beCapacity) {
+          acc.beCapacity = 0;
+        }
+        if(cur.program === 'BE') {
+          becap += cur.capacity;
+          acc.beCapacity = becap;
+        }
+        return acc;
+      }, {});
+    };
+    return result();
 
     // Annotation:
     // Write your annotation here as a comment
@@ -458,21 +450,26 @@ const nationalParksPrompts = {
     //   parksVisited: ["Rocky Mountain", "Acadia", "Zion"]
     //}
 
-    let visited = [];
-    let notVisited = [];
+    
 
-    nationalParks.forEach(park => {
-      if (park.visited === true) {
-        visited.push(park.name);
-      } else {
-        notVisited.push(park.name);
-      }
-    });
-
-    let visitStatus = { parksToVisit: notVisited, parksVisited: visited };
-
-    const result = visitStatus;
-    return result;
+    const result = () => {
+      return nationalParks.reduce((acc, cur) => {
+        if (!acc.parksToVisit) {
+          acc.parksToVisit = [];
+        }
+        if (!acc.parksVisited) {
+          acc.parksVisited = [];
+        }
+        if (cur.visited) {
+          acc.parksVisited.push(cur.name);
+        }
+        if (!cur.visited) {
+          acc.parksToVisit.push(cur.name);
+        }
+        return acc;
+      }, {});
+    };
+    return result();
 
     // Annotation:
     // Write your annotation here as a comment
@@ -489,22 +486,31 @@ const nationalParksPrompts = {
 
 
  
-    let allParks = [];
+    // let allParks = [];
 
-    // let parksPerState = nationalParks.reduce((acc, curVal) => {
-    //   acc[curVal.location] = curVal.name;
-    //   return acc;
-    // }, allParks);
+    // // let parksPerState = nationalParks.reduce((acc, curVal) => {
+    // //   acc[curVal.location] = curVal.name;
+    // //   return acc;
+    // // }, allParks);
 
-    let parksPerState = nationalParks.forEach(park => {
-      let stateAndPark = {};
-      stateAndPark[park.location] = park.name;
-      allParks.push(stateAndPark);
-    });
+    // let parksPerState = nationalParks.forEach(park => {
+    //   let stateAndPark = {};
+    //   stateAndPark[park.location] = park.name;
+    //   allParks.push(stateAndPark);
+    // });
 
 
-    const result = allParks;
-    return result;
+    const result = () => {
+      return nationalParks.reduce((acc, cur) => {
+        let parksByState = {};
+        if(!parksByState[cur.location]) {
+          parksByState[cur.location] = cur.name;
+        }
+        acc.push(parksByState);
+        return acc;
+      }, []);
+    };
+    return result();
 
     // Annotation:
     // Write your annotation here as a comment
@@ -526,22 +532,31 @@ const nationalParksPrompts = {
     //   'backpacking',
     //   'rock climbing' ]
 
-    let activities = [];
+    // let activities = [];
 
-    nationalParks.forEach(park => {
-      activities.push(park.activities);
-    });
+    // nationalParks.forEach(park => {
+    //   activities.push(park.activities);
+    // });
 
-    let combinedActs = activities.reduce((a, b) => [...a, ...b], []);
+    // let combinedActs = activities.reduce((a, b) => [...a, ...b], []);
 
-    let singular = new Set(combinedActs);
-
-
-    let allActivities = [...singular];
+    // let singular = new Set(combinedActs);
 
 
-    const result = allActivities;
-    return result;
+    // let allActivities = [...singular];
+
+
+    const result = () => {
+     return nationalParks.reduce((acc, cur) => {
+        cur.activities.forEach(activity => {
+          if(!acc.includes(activity)) {
+            acc.push(activity);
+          }
+        });
+        return acc;
+      }, []);
+    };
+    return result();
 
     // Annotation:
     // Write your annotation here as a comment
