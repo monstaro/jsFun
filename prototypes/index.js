@@ -107,16 +107,19 @@ const clubPrompts = {
     //   ...etc
     // }
 
-    let groupByName = {};
-    clubs.forEach(group => {
-      group.members.forEach(member => {
-        if (!groupByName[member]) {
-          groupByName[member] = [];
+
+    const result = clubs.reduce((acc, cur) => {
+      cur.members.forEach(member => {
+        if(!acc[member]) {
+          acc[member] = [];
         }
-        groupByName[member].push(group.club);
+        if (cur.members.includes(member)) {
+          acc[member].push(cur.club);
+        }
       });
-    });
-    const result =  groupByName;
+      
+      return acc;
+    }, {});
     return result;
 
     // Annotation:
@@ -152,20 +155,21 @@ const modPrompts = {
     //   { mod: 4, studentsPerInstructor: 8 }
     // ]
 
-    let studentsPerInstructor = [];
 
-    mods.forEach(mod => {
-      let spi = {mod: mod.mod, 
-        studentsPerInstructor: mod.students / mod.instructors
-      };
-      studentsPerInstructor.push(spi);
+
+    const result = mods.map(curMod => {
+      curMod.studentsPerInstructor = curMod.students / curMod.instructors;
+      delete curMod.students;
+      delete curMod.instructors;
+      return curMod;
     });
 
-    const result = studentsPerInstructor;
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // We want an array of the same length so we will use a map method
+    //on each iteration, we will create a new property, 'studentsPerInstructor' which is the amount of students divided by the current instructors.
+    //then we delete the properties we no longer need
   }
 };
 
@@ -195,22 +199,21 @@ const cakePrompts = {
     //    { flavor: 'yellow', inStock: 14 },
     //    ..etc
     // ]
-    let cakeStock = [];
     
- 
-
-    cakes.forEach(cake => {
-      let getCake = { flavor: cake.cakeFlavor, inStock: cake.inStock};
-      cakeStock.push(getCake);
-      return cakeStock;
-    });
-
-    const result = cakeStock;
+    const result = cakes.reduce((acc, cake) => {
+      let newCake = {};
+      newCake.flavor = cake.cakeFlavor;
+      newCake.inStock = cake.inStock;
+      acc.push(newCake);
+      return acc;
+    }, []);
     
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // Even though we are returning an array of the same length, reduce is easier to use here because we can build a new object rather than modifying each object we map over.
+    //in our reduce, create a new cake object that is empty.
+    //this object will have two properties, flavor and inStock. those properties are assigned the their respective properties from our currentValue. 
   },
 
   onlyInStock() {
@@ -233,32 +236,25 @@ const cakePrompts = {
     // },
     // ..etc
     // ]
-    let cakesInStock = [];
-
-    cakes.forEach(cake => {
-      if (cake.inStock) {
-        cakesInStock.push(cake);
-      }
-    });
-    const result = cakesInStock;
+    
+    const result = cakes.filter(cake => cake.inStock);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // Use filter to find objects that meet the condition stated
   },
 
   totalInventory() {
     // Return the total amount of cakes in stock e.g.
     // 59
 
-    let totalStockAmount = null;
-    
-    cakes.forEach(cake => {
-      totalStockAmount += cake.inStock;
-    });
+   
 
 
-    const result = totalStockAmount;
+    const result = cakes.reduce((acc, cur) => {
+      acc += cur.inStock;
+      return acc;
+    }, 0);
     return result;
 
     // Annotation:
@@ -270,31 +266,24 @@ const cakePrompts = {
     // every cake in the dataset e.g.
     // ['dutch process cocoa', 'toasted sugar', 'smoked sea salt', 'berries', ..etc]
 
-    let allToppings = [];
-
-    cakes.forEach(cake => {
-      allToppings.push(cake.toppings);
-    });
-
-    //pushes each toppings array into allToppings
-
-    let combinedToppings = allToppings.reduce((a, b) => [...a, ...b], []);
-
-    //merges multiple arrays into one
-
-    let noDups = new Set (combinedToppings);
-
-    //removes duplicate items and returns object
-
-    let toppings = [...noDups];
-
-    //turns object back into array
-
-    const result = toppings;
+    
+    const result = cakes.reduce((acc, cur) => {
+      cur.toppings.forEach(topping => {
+        if (!acc.includes(topping)) {
+          acc.push(topping);
+        }
+      });
+      return acc;
+    }, []);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // Getting a new type of array from an array of objects so 
+    // lets reduce into a new array
+    // since we are actually iterating over arrays within objects,
+    // we need to run a forEach over each toppings array.
+    // we could just push each topping into the accumulator,
+    // but since we have to skip duplicates, we create a condition that only pushes the topping if the accumulator does not include it already. 
   },
 
   groceryList() {
@@ -309,33 +298,29 @@ const cakePrompts = {
     // }
 
 
-    let allToppings = [];
+      
+    //put all toppings into an array
+    //count how many times each topping occurs in an array
+  
 
-    cakes.forEach(cake => {
-      allToppings.push(cake.toppings);
-    });
 
-    //pushes each toppings array into allToppings
 
-    let combinedToppings = 
-allToppings.reduce((a, b) => [...a, ...b], []);
-    //reduces object into array of toppings, including duplicates
-
-    let toppingQuantity = combinedToppings.reduce(function(acc, item) {
-      acc[item] = (acc[item] || 0) + 1;
+    const result = cakes.reduce((acc, cur) => {
+      cur.toppings.forEach(topping => {
+        acc[topping] ? acc[topping] += 1 : acc[topping] = 1;
+      });
       return acc;
-    }, {});
+    },{} );
+  
 
-    // reduces array into object, loops through array to set the keys based on the current value of our accumulator
-    
-
-
-
-    const result = toppingQuantity;
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // This one was tricky.
+    // We have to get into the toppings array of each cake.
+    // For each topping we iterate over, we create a conditional.
+    // If our accumulator has a property that matches the topping we are on, we can increment the value of that key.
+    // If it does not, that value remains at 1. 
   }
 };
 
@@ -366,12 +351,12 @@ const classPrompts = {
     //   { roomLetter: 'G', program: 'FE', capacity: 29 }
     // ]
 
-    let FEE = classrooms.filter(cohort => {
-      return cohort.program === 'FE';
-    });
+
     
 
-    const result = FEE;
+    const result = classrooms.filter(cohort => {
+      return cohort.program === 'FE';
+    });
     return result;
 
     // Annotation:
@@ -388,28 +373,17 @@ const classPrompts = {
 
 
 
-    const result = () => {
-      let fecap = 0;
-      let becap = 0;
-      return classrooms.reduce((acc, cur) => {
-        if (!acc.feCapacity) {
-          acc.feCapacity = 0;
-        }
-        if(cur.program === 'FE') {
-          fecap += cur.capacity;
-          acc.feCapacity = fecap;
-        }
-        if (!acc.beCapacity) {
-          acc.beCapacity = 0;
-        }
-        if(cur.program === 'BE') {
-          becap += cur.capacity;
-          acc.beCapacity = becap;
-        }
-        return acc;
-      }, {});
-    };
-    return result();
+    const result = classrooms.reduce((acc, cur) => {
+      if (cur.program === 'FE') {
+        acc.feCapacity += cur.capacity;
+      }
+      if (cur.program === 'BE') {
+        acc.beCapacity += cur.capacity;
+      }
+
+      return acc;
+    }, {feCapacity: 0, beCapacity: 0});
+    return result;
 
     // Annotation:
     // Write your annotation here as a comment
@@ -418,11 +392,9 @@ const classPrompts = {
   sortByCapacity() {
     // Return the array of classrooms sorted by their capacity (least capacity to greatest)
 
-    let sortByCap = classrooms.sort ((a, b) => {
+    const result = classrooms.sort ((a, b) => {
       return a.capacity - b.capacity;
     });
-
-    const result = sortByCap;
     return result;
 
     // Annotation: use sort method to return in ascending order
@@ -452,24 +424,18 @@ const nationalParksPrompts = {
 
     
 
-    const result = () => {
-      return nationalParks.reduce((acc, cur) => {
-        if (!acc.parksToVisit) {
-          acc.parksToVisit = [];
-        }
-        if (!acc.parksVisited) {
-          acc.parksVisited = [];
-        }
-        if (cur.visited) {
-          acc.parksVisited.push(cur.name);
-        }
-        if (!cur.visited) {
-          acc.parksToVisit.push(cur.name);
-        }
-        return acc;
-      }, {});
-    };
-    return result();
+    const result =  nationalParks.reduce((acc, cur) => {
+      if (cur.visited) {
+        acc.parksVisited.push(cur.name);
+      }
+      if (!cur.visited) {
+        acc.parksToVisit.push(cur.name);
+      }
+      return acc;
+    }, {parksToVisit: [], parksVisited: []});
+
+      
+    return result;
 
     // Annotation:
     // Write your annotation here as a comment
@@ -500,17 +466,17 @@ const nationalParksPrompts = {
     // });
 
 
-    const result = () => {
-      return nationalParks.reduce((acc, cur) => {
-        let parksByState = {};
-        if(!parksByState[cur.location]) {
-          parksByState[cur.location] = cur.name;
-        }
-        acc.push(parksByState);
-        return acc;
-      }, []);
-    };
-    return result();
+    const result = nationalParks.reduce((acc, cur) => {
+      let parksByState = {};
+      if(!parksByState[cur.location]) {
+        parksByState[cur.location] = cur.name;
+      }
+      acc.push(parksByState);
+      return acc;
+    }, []);
+
+
+    return result;
 
     // Annotation:
     // Write your annotation here as a comment
@@ -546,17 +512,15 @@ const nationalParksPrompts = {
     // let allActivities = [...singular];
 
 
-    const result = () => {
-     return nationalParks.reduce((acc, cur) => {
-        cur.activities.forEach(activity => {
-          if(!acc.includes(activity)) {
-            acc.push(activity);
-          }
-        });
-        return acc;
-      }, []);
-    };
-    return result();
+    const result =  nationalParks.reduce((acc, cur) => {
+      cur.activities.forEach(activity => {
+        if(!acc.includes(activity)) {
+          acc.push(activity);
+        }
+      });
+      return acc;
+    }, []);
+    return result;
 
     // Annotation:
     // Write your annotation here as a comment
@@ -577,17 +541,19 @@ const nationalParksPrompts = {
 
 
 // DATASET: breweries from ./datasets/breweries
+
+// Return the total beer count of all beers for every brewery e.g.
+// 40
 const breweryPrompts = {
   getBeerCount() {
-    // Return the total beer count of all beers for every brewery e.g.
-    // 40
-    let beers = 0;
+
+    let result = 0;
 
     breweries.forEach(brewery => {
-      beers += brewery.beers.length;
+      result += brewery.beers.length;
     });
       
-    return beers;
+    return result;
 
     // Annotation:
     // Write your annotation here as a comment
@@ -602,14 +568,16 @@ const breweryPrompts = {
     // ...etc.
     // ]
 
-    let bars = [];
-    const result = breweries.forEach(brewery => {
-      let bar = {};
-      bar.name = brewery.name;
-      bar.beerCount = brewery.beers.length;
-      bars.push(bar);
-    });
-    return bars;
+
+    const result = breweries.reduce((acc, cur) => {
+      let brewery = {};
+      brewery.name = cur.name;
+      brewery.beerCount = cur.beers.length;
+      acc.push(brewery);
+      return acc;
+    }, []);
+
+    return result;
 
     // Annotation:
     // Write your annotation here as a comment
@@ -619,27 +587,27 @@ const breweryPrompts = {
     // Return the beer which has the highest ABV of all beers
     // e.g.
     // { name: 'Barrel Aged Nature\'s Sweater', type: 'Barley Wine', abv: 10.9, ibu: 40 }
-    let allIbu = [];
-
-
-
-    breweries.forEach(brewery => {
-      brewery.beers.forEach(beer => {
-        allIbu.push(beer.ibu);
-      });
-    });
     
-    Math.max.apply(null, allIbu.filter(Boolean));
 
-    const result =   breweries.reduce(function(prev, current) {
-      return (prev.ibu > current.ibu) ? prev : current;
-    });
+    const result = () => {
+      return breweries.reduce((acc, cur) => {
+        cur.beers.forEach(beer => {
+          acc.push(beer);
+        });
+        acc.sort((a, b) => {
+          return b.abv - a.abv;
+        });
+        return acc;
+      }, [])[0];
+    };
+
+
     return result;
 
-
-
     // Annotation:
-    // Write your annotation here as a comment
+    // First we iterate through each brewery
+    // Then we have to get into the beers array
+    // I figured we could push all of the beers into the accumulator, then sort it by descending order of abv, then get the first element
   }
 };
 
@@ -683,13 +651,35 @@ const turingPrompts = {
     //  { name: 'Robbie', studentCount: 18 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    const result = () => {
+      return instructors.reduce((acc, cur) => {
+        let teacher = {};
+        if (!teacher.name) {
+          teacher.name = cur.name;
+        }
+        cohorts.forEach(cohort => {
+          if (cohort.module === cur.module) {
+            teacher.studentCount = cohort.studentCount;
+          }
+        });
+        acc.push(teacher);
+        return acc;
+      }, []);
+    };
+    return result();
 
     // Annotation:
     // Write your annotation here as a comment
   },
 
+
+
+  // A: Reads global scope;
+  // B: block scope takes precendent
+  // C: outside of the block. but since var isn't block scoped it reads the reassigned var, but the functionally scoped question and response
+  // D: we are out of the function so we get the definitions from global scope.
+
+  
   studentsPerInstructor() {
     // Return an object of how many students per teacher there are in each cohort e.g.
     // {
@@ -697,11 +687,27 @@ const turingPrompts = {
     // cohort1804: 10.5
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    //divide studentCount by the amount of teachers in each module
+    
+
+
+
+    const result = cohorts.reduce((acc, cur) => {
+      acc[`cohort${cur.cohort}`] = cur.studentCount / instructors.reduce((accInst, curInst) => {
+        if(curInst.module === cur.module) {
+          accInst++;
+        }
+        return accInst;
+      }, 0);
+      return acc;
+    }, {});
+
+
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // This one was crazy. Basically, we start by reducing the cohorts module because we are basing our length off our new object off of the cohorts array.
+    //we create our values using interpolation, then to assign it our value is where it gets tricky. Basically, we need to divide the total number of students in a cohort by the amount of instructors there are. So we can iterate through instructors, and if the instructor module matches the module of the Current Cohort, we add to our second accumulator. We divide the total count by this accumulator. 
   },
 
   modulesPerTeacher() {
@@ -719,7 +725,20 @@ const turingPrompts = {
     //     Will: [1, 2, 3, 4]
     //   }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+
+
+    const result = instructors.reduce((acc, cur) => {
+      acc[cur.name] = cohorts.reduce((coAcc, coCur) => {
+
+          if (coCur.curriculum.filter(subject => {
+            subject.includes('h')
+          })) {
+            console.log(coCur.module); 
+          }
+        return coAcc;
+      }, []);
+      return acc;
+    }, {});
     return result;
 
     // Annotation:

@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const scope = {
   exerciseA() {
     let personA = 'Paul';
@@ -29,7 +31,15 @@ const scope = {
 
     // Log D: personC
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = [{
+      A: "Ben"
+    }, {
+      B: "CardiB"
+    }, {
+      C: "CardiB"
+    }, {
+      D: "Paul"
+    }];
     return result;
 
     // Annotation:
@@ -45,7 +55,6 @@ const scope = {
       if (number === 75) {
         let number = 28;
       }
-
       // Log A: number
 
       function newNumber() {
@@ -63,11 +72,19 @@ const scope = {
 
     // Log D: number
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = [{
+      A: 75
+    }, {
+      B: 64
+    }, {
+      C: 64
+    }, {
+      D: 30
+    }];
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // number is first declared as a global variable assigned to 30. when we run the function, it is reassigned in the scope of the function to 75. The first if block reassigns it to 28, but only within the scope of that if block because it is declared with let not var. so when we log number outside of the it block, it remains unaffected.when we run log b, it is reassigned in the global scope to 64. this also applies to log c. we run log D outside of the function so it will log the originally assigned number. 
   },
 
   exerciseC() {
@@ -97,7 +114,15 @@ const scope = {
 
     // Log D: greeting
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = [{
+     A: 'Yo'
+    }, {
+     B: 'Hey'
+    }, {
+     C: 'Hey'
+    }, {
+     D: 'Hello' 
+    }];
     return result;
 
     // Annotation:
@@ -131,7 +156,15 @@ const scope = {
 
     // Log D: greeting
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = [{
+      A: 'hi'
+     }, {
+      B: 'welcome'
+     }, {
+      C: 'welcome'
+     }, {
+      D: 'howdy' 
+     }];
     return result;
 
     // Annotation:
@@ -153,17 +186,24 @@ const scope = {
 
         // Log A: name
       }
-
+      
       // Log B: name
     }
-
+    
     // Log C: name
 
     sayName();
-
     // Log D: name
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = [{
+      C: "Brittany"
+    }, {
+      A: "Nathaniel"
+    }, {
+      B: "Nathaniel"
+    }, {
+      D: "Brittany"
+    }];
     return result;
 
     // Annotation:
@@ -198,7 +238,17 @@ const scope = {
 
     // Log E: dog
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = [{
+      A: "Spot"
+    }, {
+      B: "Spot"
+    }, {
+      C: "Biscuit"
+    }, {
+      D: "Biscuit"
+    }, {
+      E: "Biscuit"
+    }];
     return result;
 
     // Annotation:

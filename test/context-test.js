@@ -1,3 +1,4 @@
+/* eslint-disable */
 const chai = require("chai")
 const expect = chai.expect;
 const context = require("../context/index");
@@ -28,7 +29,7 @@ describe("CONTEXT", () => {
   }), it("exerciseC", () => {
     const e = "el" == context.exerciseC();
     expect(e).withMessage("Your result is not the correct context").to.be.true
-  }), it("exerciseD", () => {
+  }), it.only("exerciseD", () => {
     const e = "global window object" == context.exerciseD();
     expect(e).withMessage("Your result is not the correct context").to.be.true
   }), it("exerciseE", () => {
