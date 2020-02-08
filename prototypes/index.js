@@ -728,15 +728,14 @@ const turingPrompts = {
 
 
     const result = instructors.reduce((acc, cur) => {
-      acc[cur.name] = cohorts.reduce((coAcc, coCur) => {
-
-          if (coCur.curriculum.filter(subject => {
-            subject.includes('h')
-          })) {
-            console.log(coCur.module); 
+      acc[cur.name] = [];
+      cohorts.forEach(cohort => {
+        cohort.curriculum.forEach(subject => {
+          if (cur.teaches.includes(subject) && !acc[cur.name].includes(cohort.module)) {
+            acc[cur.name].push(cohort.module);
           }
-        return coAcc;
-      }, []);
+        });
+        });
       return acc;
     }, {});
     return result;
