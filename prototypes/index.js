@@ -735,7 +735,7 @@ const turingPrompts = {
             acc[cur.name].push(cohort.module);
           }
         });
-        });
+      });
       return acc;
     }, {});
     return result;
@@ -754,7 +754,19 @@ const turingPrompts = {
     //   recursion: [ 'Pam', 'Leta' ]
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = instructors.reduce((acc, cur) => {
+      cohorts.forEach(cohort => {
+        cohort.curriculum.forEach(curriculum => {
+          if (!acc[curriculum]) {
+            acc[curriculum] = [];
+          }
+          if(cur.teaches.includes(curriculum) && !acc[curriculum].includes(cur.name)) {
+            acc[curriculum].push(cur.name);
+          }
+        });
+      });
+      return acc;
+    }, {});
     return result;
 
     // Annotation:
@@ -789,14 +801,42 @@ const bossPrompts = {
     //   { bossName: 'Scar', sidekickLoyalty: 16 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    
+    const result = () => {
+      var allBosses = Object.values(bosses);
+      let bossKicks = [];
+      allBosses.forEach(a => {
+        let boss = {};
+        boss.bossName = a.name;
+        boss.sidekickLoyalty = 0;
+        sidekicks.forEach(sidekick => {
+          if (sidekick.boss === a.name) {
+            boss.sidekickLoyalty += sidekick.loyaltyToBoss;
+          }
+        });
+        bossKicks.push(boss);
+      });
+      return bossKicks;
+    }; 
+    return result();
 
-    // Annotation:
-    // Write your annotation here as a comment
+
+    // const result = sidekicks.reduce((acc, cur) => {
+    //   let bossNames = Object.keys(bosses);
+    //   let obj = {};
+    //   bossNames.forEach(boss => {
+    //     obj.bossName = bosses[boss].name;
+    //     obj.sidekickLoyalty = 0;
+    //     });
+    //   return acc;
+    // }, [])
+
+    // return result;
   }
 };
 
+// Annotation:
+// Write your annotation here as a comment
 
 
 
