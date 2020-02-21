@@ -802,36 +802,27 @@ const bossPrompts = {
     // ]
 
     
+  
+
     const result = () => {
-      var allBosses = Object.values(bosses);
-      let bossKicks = [];
-      allBosses.forEach(a => {
-        let boss = {};
-        boss.bossName = a.name;
-        boss.sidekickLoyalty = 0;
+      let bossesList = Object.keys(bosses);
+      return bossesList.reduce((bossName, boss) => {
+        let bossAndSidekick = {};
+        bossAndSidekick.bossName = bosses[boss].name;
+        bossAndSidekick.sidekickLoyalty = 0;
         sidekicks.forEach(sidekick => {
-          if (sidekick.boss === a.name) {
-            boss.sidekickLoyalty += sidekick.loyaltyToBoss;
+          if (bossAndSidekick.bossName === sidekick.boss) {
+            bossAndSidekick.sidekickLoyalty += sidekick.loyaltyToBoss;
           }
         });
-        bossKicks.push(boss);
-      });
-      return bossKicks;
-    }; 
+        bossName.push(bossAndSidekick);
+        return bossName;
+      }, []);
+    };
+
+
     return result();
 
-
-    // const result = sidekicks.reduce((acc, cur) => {
-    //   let bossNames = Object.keys(bosses);
-    //   let obj = {};
-    //   bossNames.forEach(boss => {
-    //     obj.bossName = bosses[boss].name;
-    //     obj.sidekickLoyalty = 0;
-    //     });
-    //   return acc;
-    // }, [])
-
-    // return result;
   }
 };
 
@@ -871,8 +862,16 @@ const astronomyPrompts = {
     //     color: 'red' }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    const result = () => {
+      constNames = Object.keys(constellations);
+      return stars.reduce((starsInConst, star) => {
+        if (constNames.includes(star.constellation.toLowerCase())) {
+          starsInConst.push(star);
+        }
+        return starsInConst;
+      }, []);
+    };
+    return result();
 
     // Annotation:
     // Write your annotation here as a comment
@@ -889,8 +888,15 @@ const astronomyPrompts = {
     //   red: [{obj}]
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    const result = () => {
+      return stars.reduce((starsByColor, star) => {
+        if (!starsByColor[star.color]) {
+          starsByColor[star.color] = [star];
+        }
+        return starsByColor;
+      }, {});
+    };
+    return result();
 
     // Annotation:
     // Write your annotation here as a comment
@@ -911,8 +917,19 @@ const astronomyPrompts = {
     //    "The Little Dipper" ]
 
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    const result = () => {
+
+      let sorted = stars.sort((a, b) => {
+        return a.visualMagnitude - b.visualMagnitude;
+      });
+      return sorted.reduce((constellation, current) => {
+        if (current.constellation) {
+          constellation.push(current.constellation);
+        }
+        return constellation;
+      }, [])
+    };
+    return result();
 
     // Annotation:
     // Write your annotation here as a comment
