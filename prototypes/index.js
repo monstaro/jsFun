@@ -892,6 +892,8 @@ const astronomyPrompts = {
       return stars.reduce((starsByColor, star) => {
         if (!starsByColor[star.color]) {
           starsByColor[star.color] = [star];
+        } else {
+          starsByColor[star.color].push(star);
         }
         return starsByColor;
       }, {});
@@ -959,11 +961,25 @@ const ultimaPrompts = {
     // Return the sum of the amount of damage for all the weapons that our characters can use
     // Answer => 113
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = characters.reduce((damage, character) => {
+      let weaponsKeys = Object.keys(weapons);
+      weaponsKeys.forEach(weapon => {
+        character.weapons.forEach(charWeapon => {
+          if (charWeapon === weapon) {
+            damage += weapons[weapon].damage;
+          }
+        });
+      });
+      return damage;
+    }, 0);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // loop through characters
+    // loop through weapons using obj.keys
+    // when we're on our first character, loop through weapons
+    // if weapon matches our current index on weapons, 
+    // increment a counter based on the damage count
   },
 
   charactersByTotal() {
@@ -971,10 +987,30 @@ const ultimaPrompts = {
     // Return the sum damage and total range for each character as an object.
     // ex: [ { Avatar: { damage: 27, range: 24 }, { Iolo: {...}, ...}
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = characters.reduce((charWeapon, character) => {
+      let weaponKeys = Object.keys(weapons)
+      let newChar = {};
+      newChar[character.name] = {damage: 0, range: 0};
+      character.weapons.forEach(characterWeapon => {
+        weaponKeys.forEach(weapon => {
+          if (characterWeapon === weapon) {
+            newChar[character.name].damage += weapons[weapon].damage;
+            newChar[character.name].range += weapons[weapon].range;
+          }
+        });
+      });
+      charWeapon.push(newChar);
+      return charWeapon;
+    }, []);
     return result;
 
     // Annotation:
+    // we are going to loop thru characters using reduce
+    // create a new array of objects, each with a key of the current characters name
+    // on each character, loop through their weapons
+    // then iterate over weapons obj
+    // if charWeapon matches current weapon
+    // create a new object that adds the damage property and the range property
     // Write your annotation here as a comment
   },
 };
@@ -1008,7 +1044,15 @@ const dinosaurPrompts = {
     //   'Jurassic World: Fallen Kingdom': 18
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = movies.reduce((movieList, movie) => {
+      movieList[movie.title] = 0;
+      movie.dinos.forEach(dino => {
+        if (dinosaurs[dino].isAwesome) {
+          movieList[movie.title] ++;
+        }
+      });
+      return movieList;
+    }, {});
     return result;
 
     // Annotation:
@@ -1041,11 +1085,24 @@ const dinosaurPrompts = {
       }
     */
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = movies.reduce((director, movie) => {
+
+      if (!director[movie.director]) {
+        director[movie.director] = {};
+      }
+      director[movie.director][movie.title] = Math.floor(movie.cast.reduce((age, actor) => {
+        age += (movie.yearReleased - humans[actor].yearBorn)
+        return age;
+      }, 0) / movie.cast.length);
+      return director;
+    }, {});
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // First I created an object whos keys are each director in the movies array. 
+    // I assigned that value to an empty object
+    // that object gets filled with keys that correspond to each movie that the director has made.
+    // the value of each movie is the avg age of the cast members when the movie was released. 
   },
 
   uncastActors() {
@@ -1074,8 +1131,32 @@ const dinosaurPrompts = {
       }]
     */
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    const result = () => {
+      let allActors = Object.keys(humans);
+      let jurassicActors = movies.reduce((actors, movie) => {
+        actors.push(movie.cast);
+        return actors;
+      }, []).flat();
+      let unCast = allActors.filter(actor => !jurassicActors.includes(actor));
+      return unCast.reduce((allUncast, actor) => {
+        humans[actor].name = actor;
+        allUncast.push(humans[actor]);
+        allUncast.forEach(a => delete(a.yearBorn));
+        return allUncast;
+      }, []).sort((a, b) =>  {
+        let nameA = a.nationality.toLowerCase();
+        var nameB = b.nationality.toLowerCase();
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }    
+        return 0;
+      });
+    };
+
+    return result();
 
     // Annotation:
     // Write your annotation here as a comment
