@@ -1137,9 +1137,12 @@ const dinosaurPrompts = {
         actors.push(movie.cast);
         return actors;
       }, []).flat();
+
       let unCast = allActors.filter(actor => !jurassicActors.includes(actor));
+
       return unCast.reduce((allUncast, actor) => {
         humans[actor].name = actor;
+        
         allUncast.push(humans[actor]);
         allUncast.forEach(a => delete(a.yearBorn));
         return allUncast;
@@ -1178,8 +1181,15 @@ const dinosaurPrompts = {
       { name: 'Bryce Dallas Howard', ages: [ 34, 37 ] } ]
     */
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    const result = () => {
+     let allActors = movies.reduce((allActors, movie) => {
+        allActors.push(movie.cast);
+        return allActors;
+      }, []).flat();
+
+
+    };
+    return result();
 
     // Annotation:
     // Write your annotation here as a comment
